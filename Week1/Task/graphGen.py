@@ -45,6 +45,7 @@ if __name__ == '__main__':
         x.append(i)
         naive.append(timeNaive)
         pragma.append(timePragma)
+        print(i)
 
     plt.figure()
     plt.plot(x,naive,'r-',label='naive method')
@@ -52,4 +53,4 @@ if __name__ == '__main__':
     plt.xlabel('size of vector')
     plt.ylabel('time taken by respective methods')
     plt.legend()
-    plt.savefig("graph.png")
+    plt.savefig("graph1.png")

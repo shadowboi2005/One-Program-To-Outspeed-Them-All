@@ -1,6 +1,6 @@
 #include "matrix.h"
 #define Loop(i,a,b) for (int i = a ; i < b ; i++)
-#define MAX_THREADS 8
+#define numthrds 8
 using namespace std;
 
 Matrix::Matrix(int a, int b) { // generate a matrix (2D array) of dimensions a,b
@@ -45,6 +45,18 @@ int** Matrix::T(){
     return MT;
 }
 
+void spinner(int n,int k,int m,Matrix* a,Matrix* b,Matrix* c,int i){
+    for(int x=0;x<=(n-i-1)/numthrds;x++){
+        int xori = x*numthrds + i;
+        for(int y=0;y<m;y++){
+            int temp=0;
+            for(int ai = 0;ai<k;ai++){
+                temp += a->M[xori][ai] * b->M[ai][y];
+            }
+            c->set(xori,y,temp);
+        }
+    }
+}
 Matrix* Matrix::multiplyMatrix(Matrix* N) {
     if (this->m != N->n) {
         return NULL;
@@ -64,8 +76,15 @@ Matrix* Matrix::multiplyMatrix(Matrix* N) {
     C[i][j] = sum over k = 0 to n2-1 {A[i][k]*B[k][j]}
 
     */
-    cout<<"STUDENT CODE NOT IMPLEMENTED!\n";
-    exit(1);
+    thread* threads = new std::thread[8];
+    for(int i=0;i<numthrds;i++){
+        threads[i] = std::thread(spinner,this->n,this->m,N->m,this,N,c,i);
+    }
+    for(int i=0;i<numthrds;i++){
+        threads[i].join();
+    }
+    //cout<<"STUDENT CODE IMPLEMENTED!\n";
+    //exit(1);
     return c;
 }
 

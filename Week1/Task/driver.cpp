@@ -19,7 +19,7 @@ int main(int argc, char **argv) {
     Matrix* C = A->multiplyMatrix(B);
     auto end = chrono::high_resolution_clock::now();
     auto elapsed = chrono::duration_cast<chrono::duration<double>>(end - start);
-    cout <<elapsed.count()<<"\n";
+    cout <<elapsed.count()<<std::endl;
     A->~Matrix();
     B->~Matrix();
     C->~Matrix();
