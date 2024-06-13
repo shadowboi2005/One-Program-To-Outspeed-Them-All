@@ -174,6 +174,19 @@ MAKE A VECTORIZED IMPLEMENTATION OF ABOVE CODE
 */
 
 //student code begin
-cout<<"Task not completed!\n";
+int32_t x1[2] = {127,203};
+int32_t y1[2] = {155,201};
+int64_t z1[2];
+z1[0] = x1[0];
+z1[0] = z1[0]<<32;
+z1[0] = z1[0]+x1[1];
+z1[1] = y1[0];
+z1[1] = z1[1]<<32;
+z1[1] += y1[1];
+int64_t z2=z1[0] + z1[1];
+int32_t zout[2];
+zout[0] = z2>>32;
+zout[1] = z2^(0xFFFFFFFF00000000);
+cout<<zout[0]<<" "<<zout[1]<<endl;
 //student code end
 }

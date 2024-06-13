@@ -23,7 +23,7 @@ def run_executable_with_input(executable_path, input_integer):
 
     # Get output from the executable
     output = (process.stdout.readlines())[0].split()
-    # print(output)
+    print(output)
     error = process.stderr.readline().strip()
 
     # Close the input stream
