@@ -16,7 +16,7 @@ void welcome(int id){
     */
     // cout << "I am thread " << id << endl;
     printf("I am thread %d\n",id);
-    // printf("Bye %d\n",id);
+    printf("Bye %d\n",id);
     m.unlock();
     return;
 }

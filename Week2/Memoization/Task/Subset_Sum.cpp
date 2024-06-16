@@ -26,12 +26,22 @@ using namespace chrono;
 */
 ll Count = 0;
 // Declare some variable here for memoization
-ll solution(ll* A, ll n, ll index){
+
+ll solution(ll* A, ll n, ll index,ll* subsum){
     Count++; // Do not remove this line
 
-    //STUDENT CODE BEGINS HERE
-    cout<<"STUDENT CODE NOT IMPLEMENTED\n";
-    exit(1);
+    if(subsum[index]!=-1){
+      return subsum[index];
+    }
+    else{
+      if (solution(A,n,index-2,subsum)+A[index] > solution(A,n,index-3,subsum)+A[index-1]){
+        subsum[index] =subsum[index-2] +A[index]; 
+        return subsum[index-2] +A[index];
+      }  else{
+        subsum[index]=subsum[index-3]+A[index-1];
+        return subsum[index-3]+A[index-1];
+      }
+    }
 
     return 0; // Placeholder line
 }
@@ -41,7 +51,12 @@ int main(){
     ll* A = new ll[n];
     Loop(i,0,n) cin >> A[i];
     auto start = high_resolution_clock::now();
-    ll sum = solution(A,n,n - 1);
+    ll subsum[n];
+    Loop(i,0,n) subsum[i] = -1;
+    subsum[0] = A[0];
+    subsum[1] = A[0]>A[1]?A[0]:A[1];
+    subsum[2] = A[1]>A[0]+A[2]?A[1]:A[0]+A[2];
+    ll sum = solution(A,n,n - 1,subsum);
     auto end = high_resolution_clock::now();
     auto elapsed = duration_cast<duration<double>>(end - start);
     cout << "Maximum subset sum\t" << sum << "\n";

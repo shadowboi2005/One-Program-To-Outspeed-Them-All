@@ -57,7 +57,7 @@ int main () {
                 for(int j =0;j<8;j++){
                     temp[j] = vec1[j]*vec2[j];
                 }
-                arr[i] =_mm256_loadu_ps(temp);
+                arr[i/8] =_mm256_loadu_ps(temp);
             }
             __m256 result = _mm256_loadu_ps(arr0);
             for(int i=0;i<n/8;i++){
@@ -78,7 +78,7 @@ int main () {
                 for(int j =0;j<8;j++){
                     temp[j] = vec1[j]*vec2[j];
                 }
-                arr[i] =_mm256_loadu_ps(temp);
+                arr[i/8] =_mm256_loadu_ps(temp);
             }
             __m256 result = _mm256_loadu_ps(arr0);
             for(int i=0;i<n/8;i++){

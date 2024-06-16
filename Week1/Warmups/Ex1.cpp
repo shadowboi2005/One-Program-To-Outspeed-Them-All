@@ -1,5 +1,8 @@
 #include <iostream>
 #include <thread>
+#include <stdlib.h>
+#include <unistd.h>
+
 
 #define Loop(i,a,b) for (int i = a ; i < b ; i++)
 
@@ -10,9 +13,9 @@ void welcome(int id){
         1. Try this code with both cout and printf
         2. Try uncommenting the second printf and observe the outputs
     */
-    // cout << "I am thread " << id << endl;
+    //cout << "I am thread " << id << endl;
     printf("I am thread %d\n",id);
-    // printf("Bye %d\n",id);
+    printf("Bye %d\n",id);
     return;
 }
 
@@ -25,8 +28,9 @@ int main(int argc, char* argv[]){
         id[i] = i;
         int a = i;
         t[i] = thread(welcome,a);
+        t[i].join();
     }
-    Loop(i,0,n) t[i].join();    
+    //Loop(i,0,n) ;    
     delete [] id;
     delete [] t;
     return 0;
