@@ -24,10 +24,12 @@ kernel void matMul (__global float* A, __global float *B, __global float *C, int
 	uint N = 1024;
 	const uint i = n/N;
 	const uint k = n%N;
-	C[n] = 0;
+	int sum = 0;
 	for(int j=0;j < N;j++){
-		C[n] += A[i*N+j]*B[j*N+k];
+		sum += A[i*N+j]*B[j*N+k];
+		//C[n] += A[i*N+j]*B[j*N+k];
 	}
+	C[n] = sum;
 	return;
 	// TASK 2 CODE ENDS HERE
 }
