@@ -11,6 +11,7 @@ int main() {
 
 	Kernel add_kernel(device, N, "add_kernel", A, B, C); // kernel that runs on the device
 
+	
 	for(uint n=0u; n<N; n++) {
 		A[n] = 3.0f; // initialize memory
 		B[n] = 2.0f;
