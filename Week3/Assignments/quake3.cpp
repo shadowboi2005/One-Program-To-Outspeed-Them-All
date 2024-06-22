@@ -5,9 +5,11 @@
 #include <bits/stdc++.h>
 using namespace std;
 
+#define MAXThreads 8
 #define MAX 10000000
 #define MIN 0.000001
 
+mutex m;
 /*
 
 TASK : Given an array of floats A, return an array of probabilities B, such that B[i] = softmax(1/sqrt(A[i]))
@@ -64,6 +66,24 @@ Then it computes softmax in O(n)
 
 }
 
+void spinner1(float *A, float *B, int j,float *sum,int n){
+    float partialsum =0 ;
+    for(int i =j;i<n;i+=MAXThreads){
+        B[i] = quake3Algo(A[i]);
+        B[i] = exp(-B[i]);
+        partialsum += B[i];
+    }
+    m.lock();
+    sum[0] += partialsum;
+    m.unlock();
+}
+
+void spinner2(float *A, float *B, int j,float* sum,int n){ 
+    for(int i =j;i<n;i+=MAXThreads){
+        B[i] = B[i]/sum[0];
+    }
+}
+
 void optimal (float *A, float *B, int n) {
 
 /*
@@ -74,9 +94,26 @@ HINT : USE SIMD INSTRUCTIONS, YOU MAY FIND SOMETHING BEAUTIFUL ONLINE. THEN USE 
 (Note we do not expect to see a speedup for low values of n, but for n > 100000)
 
 */
-
-    cout<<"Student code not implemented\n";
-    exit(1);
+    
+    thread* t = new thread[MAXThreads];
+    float* sum = new float[1];
+    *sum = 0;
+    for(int i=0;i<MAXThreads;i++){
+        t[i] = thread(spinner1,A,B,i,sum,n);
+    }
+    for(int i=0;i<MAXThreads;i++){
+        t[i].join();
+    }
+    thread* t2=new thread[MAXThreads];
+    for(int i=0;i<MAXThreads;i++){
+        t2[i] = thread(spinner2,A,B,i,sum,n);
+    }
+    for(int i=0;i<MAXThreads;i++){
+        t2[i].join();
+    }
+    delete [] t;
+    delete [] t2;
+    delete [] sum;
 
 }
 
