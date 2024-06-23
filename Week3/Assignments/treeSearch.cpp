@@ -79,8 +79,38 @@ string naiveSearch (tree &T, int k) {
         for (auto x : tmp->children) {
             q.push(x);
         }
+        
     }
     return "\0";
+}
+
+void findnode(bool* isfound,node* u,int k,string* t){
+    queue<node*> q;
+    q.push(u);
+    while (!q.empty()) {
+        node *tmp = q.front();
+        q.pop();
+        if (tmp->value == k) { // found it!
+            vector<node*> seq; // vector to construct the string
+            seq.push_back(tmp);
+            node *u = tmp->parent;
+            while (u != NULL) {
+                seq.push_back(u);
+                u = u->parent;    
+            }
+            for (int i=seq.size() - 1; i >= 0; i--) {
+                t[0] += seq[i]->bit;
+            }
+            *isfound = true;
+            return;
+        }
+        for (auto x : tmp->children) {
+            q.push(x);
+        }
+        if(isfound[0]){
+            return;
+        }    
+    }
 }
 
 string optim(tree &T, int k) {
@@ -92,11 +122,54 @@ HINT : USE MULTITHREADING TO SEARCH IN SUBTREES THEN RETURN THE MOMENT U FIND IT
 (Note we do not expect to see a speedup for low values of n, but for n > 10000)
 
 */
-
-    cout<<"Student code not implemented\n";
-    exit(1);
-
+    queue<node*> q;
+    q.push(T.root);
+    while (!q.empty()) {
+        node *tmp = q.front();
+        q.pop();
+        if (tmp->value == k) { // found it!
+            vector<node*> seq; // vector to construct the string
+            seq.push_back(tmp);
+            node *u = tmp->parent;
+            while (u != NULL) {
+                seq.push_back(u);
+                u = u->parent;    
+            }
+            string t;
+            for (int i=seq.size() - 1; i >= 0; i--) {
+                t += seq[i]->bit;
+            }
+            return t;
+        }
+        for (auto x : tmp->children) {
+            q.push(x);
+        }
+        if(q.size()>8){
+            break;
+        }    
+    }
+    bool* isfound = new bool[1];
+    isfound[0] = false;
+    string* str = new string[1];
+    str[0] = "";
+    int sizein = q.size();
+    thread* thread1 = new thread[sizein];
+    for(int i= 0;i<sizein;i++){
+        node* tmp =q.front();
+        q.pop();
+        thread1[i] = thread(findnode,isfound,tmp,k,str);
+        //cout<<"hi";
+    }
+    for(int i= 0;i<sizein;i++){
+        thread1[i].join();
+    }
+    if(str[0] != ""){
+        
+        return str[0];
+    }
+    return "\0";
 }
+
 
 int main() {
     int n;
