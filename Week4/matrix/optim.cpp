@@ -1,26 +1,25 @@
 #include "matrix.h"
+#include "opencl.hpp"
+
+
 
 matrix::matrix(unsigned long rowNum, unsigned long colNum){
-    throw std::invalid_argument("CONSTRUCTOR NOT IMPLEMENTED!\n"); // Not optimisable
     data.resize(rowNum*colNum,0);
     rows = rowNum;
     cols = colNum;
 }
 
 matrix::matrix(unsigned long size){
-    throw std::invalid_argument("1D CONSTRUCTOR NOT IMPLEMENTED!\n"); // Not optimisable
     matrix(size,1);
 }
 
 matrix::matrix(const matrix& other) {
-    throw std::invalid_argument("COPY CONSTRUCTOR NOT IMPLEMENTED!\n"); // Not optimisable
     data = other.data;
     rows = other.rows;
     cols = other.cols;
 }
 
 matrix& matrix::operator=(const matrix& other) {
-    throw std::invalid_argument("EQUALITY OPERATOR NOT IMPLEMENTED!\n"); // Not optimisable
     // Allocate new resource
     rows = other.rows;
     cols = other.cols;
@@ -30,14 +29,28 @@ matrix& matrix::operator=(const matrix& other) {
 }
 
 matrix operator+(const matrix& first, const matrix& second){
-    throw std::invalid_argument("ELEMENTWISE ADDITION OPERATOR NOT IMPLEMENTED!\n"); // you can definitely optimise this
     if (first.rows!=second.rows || first.cols!=second.cols){
         throw std::invalid_argument("cannot add ( "+ to_string(first.rows) +" , " + to_string(first.cols) + " ) with ( " + to_string(second.rows) + " , " + to_string(second.cols) + " )" );
         }
     else{
+        Device device (select_device_with_most_flops());
         matrix sum(first.rows,first.cols);
-        for( unsigned long i=0;i<first.rows*first.cols;i++){
-            sum.data[i]=first.data[i]+second.data[i];
+        int arrlen = first.rows*first.cols;
+        Memory<float> firstd(device, arrlen);
+        Memory<float> secondd(device, arrlen);
+        Memory<float> summed(device, arrlen);
+        Kernel add_kernel(device, N, "add_kernel", firstd, secondd, summed); // kernel that runs on the device
+        for(int i =0;i <arrlen;i++){
+            firstd[i] = first.data[i];
+            secondd[i] =second.data[i];
+            summed[i] = 0;
+        }
+        firstd.write_to_device();
+        secondd.write_to_device();
+        add_kernel.run();
+        summed.read_from_device();
+        for(int i=0;i < arrlen;i++){
+            sum.data[i] = summed[i];
         }
         return sum;
     }
@@ -58,7 +71,6 @@ matrix operator-(const matrix& first, const matrix& second){
 }
 
 matrix operator*(const matrix& first, const matrix& second){
-    throw std::invalid_argument("ELEMENTWISE MULTIPLICATION OPERATOR NOT IMPLEMENTED!\n"); // you can definitely optimise this
     if (first.rows!=second.rows || first.cols!=second.cols){
         throw std::invalid_argument("cannot add ( "+ to_string(first.rows) +" , " + to_string(first.cols) + " ) with ( " + to_string(second.rows) + " , " + to_string(second.cols) + " )" );
         }

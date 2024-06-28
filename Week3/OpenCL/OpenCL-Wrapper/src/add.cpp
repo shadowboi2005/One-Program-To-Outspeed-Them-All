@@ -4,11 +4,11 @@
 int main() {
 	Device device(select_device_with_most_flops()); // compile OpenCL C code for the fastest available device
 
-	const uint N = 1024u; // size of vectors
+	const int N = 1024; // size of vectors
 	Memory<float> A(device, N); // allocate memory on both host and device
 	Memory<float> B(device, N);
 	Memory<float> C(device, N);
-
+	float x[N];
 	Kernel add_kernel(device, N, "add_kernel", A, B, C); // kernel that runs on the device
 
 	
@@ -16,8 +16,9 @@ int main() {
 		A[n] = 3.0f; // initialize memory
 		B[n] = 2.0f;
 		C[n] = 1.0f;
+		x[n] = 3.0f;
 	}
-
+	//A = x;
 	std::cout<<"Printing value of C before addition : ";
 	for (uint i=0u; i<N; i++) {
 		std::cout<<C[i]<<" ";
