@@ -50,3 +50,17 @@ Here is the tentative schedule:
 - However, traditional machine learning is done almost entirely in `python`, due to the language's powerfull abstractions
 - Last week, we shattered the wall between the `numpy` library and this week will expose the power of `low level code` to this coveted field
 - Put your matrices to work performing `linear` and `logistic regression`, the fundamental cornerstones of any good ML library 
+## Week6 : CNF Solver
+- One of the most important problems of the last century
+- It quite literally has a `million dollar` price tag 
+- Modern SAT solvers are incredibly powerful and highly specialised, the goal is to try to replicate this power
+- Unlike matrices, we cannot just throw `multithreading` at this problem and hope to solve it
+- We have to be a lot more `clever` about optimising this
+- Get started by following the instructions in the `README.md` file in the `Week6` folder
+## Week7 : SAT Solver
+- Make the CNF Solver of Week 6 actually usable via API calls
+- Add compatibility of any `arbitary formula` rather than restricting yourself to CNFs
+- Use this SAT Solver to solve `NP-Complete` problems
+- You will have to use your brain to think about how you can `reduce` the problems to SAT
+- No forced optimizations this week, although tseitin can be highly optimized
+- Get started by following the instructions in the `README.md` file in the `Week7` folder
