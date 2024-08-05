@@ -94,22 +94,25 @@ while (true)
         bool clause_satisfied = false;
         for(auto& literal : clause){
             int varnum = abs(literal);
+            //cout<< literal<<","<<partialModel[abs(literal)]<<endl;
             if(partialModel[varnum] == UNDEFINED){
                 num_of_unasgn_var++;
                 unasgn_literal = literal;
             }
+
             int not_not_there = (literal > 0)? 1:0; //-x or x
             if(partialModel[varnum] == not_not_there){// check if it true or not
                 clause_satisfied = true;
                 break;
             }
         }
-        if(!clause_satisfied && num_of_unasgn_var){
+        if(!clause_satisfied && num_of_unasgn_var==0){
             return false; // backtrack now
         }
         if(!clause_satisfied && num_of_unasgn_var ==1){
             partialModel[abs(unasgn_literal)] = (unasgn_literal > 0)? 1:0;
             clause_exist = true;
+            break;
         }
     }
     if(!clause_exist){
@@ -145,9 +148,11 @@ else {
 }
 
 */
+
 if(!unitProp(partialModel)){
     return false;
 }
+//cout<<"reached here\n";
 bool form_is_sat = true;
 for(auto& clause :clauses){
     bool clause_Val = false;
@@ -168,22 +173,25 @@ if(form_is_sat){
     return true;
 }
 for(int i = 1;i<numVariables +1;i++){
-    if(partialModel[i] = UNDEFINED){
-        vector<int> var_true_model = partialModel;
-        vector<int> var_false_model = partialModel;
+    if(partialModel[i] == UNDEFINED){
+        vector<int> var_true_model(partialModel);
+        vector<int> var_false_model(partialModel);
         var_true_model[i] = 1;
         var_false_model[i] = 0;
+        /*for (int i=1; i<var_true_model.size(); i++) {
+            cout<<i<<" : "<<var_true_model[i]<<endl;
+        } */
         if(doPll(var_true_model) || doPll(var_false_model)){
             return true;
         } 
         return false;
     }
 }
-return false;
+return false; 
 }
 
 bool dpll::solve() {
-    vector<int> m(numVariables,UNDEFINED);
+    vector<int> m(numVariables+1,UNDEFINED);
     return doPll(m);
 }
 
