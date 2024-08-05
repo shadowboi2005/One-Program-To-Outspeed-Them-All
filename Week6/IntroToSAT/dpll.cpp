@@ -21,8 +21,8 @@ class dpll {
     uint numVariables;
     uint numClauses;
     vector<vector<int>> clauses;
-    bool unitProp (vector<int> partialModel);
-    bool doPll (vector<int> partialModel);
+    bool unitProp (vector<int>& partialModel);
+    bool doPll (vector<int>& partialModel);
     
     public:
     vector<int> finalModel;
@@ -64,8 +64,10 @@ void dpll::getInput () {
     }
 }
 
-bool dpll::unitProp (vector<int> partialModel) {
+bool dpll::unitProp (vector<int>& partialModel) {
 /*
+}
+
 
 Implement unit propogation!
 while (true) {
@@ -83,9 +85,43 @@ while (true) {
 }
 
 */
+while (true)
+{
+    bool clause_exist = false;
+    for(auto& clause: clauses){
+        int num_of_unasgn_var = 0;
+        int unasgn_literal = 0;
+        bool clause_satisfied = false;
+        for(auto& literal : clause){
+            int varnum = abs(literal);
+            if(partialModel[varnum] == UNDEFINED){
+                num_of_unasgn_var++;
+                unasgn_literal = literal;
+            }
+            int not_not_there = (literal > 0)? 1:0; //-x or x
+            if(partialModel[varnum] == not_not_there){// check if it true or not
+                clause_satisfied = true;
+                break;
+            }
+        }
+        if(!clause_satisfied && num_of_unasgn_var){
+            return false; // backtrack now
+        }
+        if(!clause_satisfied && num_of_unasgn_var ==1){
+            partialModel[abs(unasgn_literal)] = (unasgn_literal > 0)? 1:0;
+            clause_exist = true;
+        }
+    }
+    if(!clause_exist){
+        break;
+    }
+}
+return true;
+
+
 }
 
-bool dpll::doPll (vector<int> partialModel) {
+bool dpll::doPll (vector<int>& partialModel) {
 
 /*
 
@@ -109,7 +145,41 @@ else {
 }
 
 */
-
+if(!unitProp(partialModel)){
+    return false;
+}
+bool form_is_sat = true;
+for(auto& clause :clauses){
+    bool clause_Val = false;
+    for(auto& literal : clause){
+        int parity = (literal > 0)? 1:0;
+        if(partialModel[abs(literal)] == parity){
+            clause_Val = true;
+            break;
+        }
+    }
+    if(!clause_Val){
+        form_is_sat = false;
+        break;
+    }
+}
+if(form_is_sat){
+    finalModel = partialModel;
+    return true;
+}
+for(int i = 1;i<numVariables +1;i++){
+    if(partialModel[i] = UNDEFINED){
+        vector<int> var_true_model = partialModel;
+        vector<int> var_false_model = partialModel;
+        var_true_model[i] = 1;
+        var_false_model[i] = 0;
+        if(doPll(var_true_model) || doPll(var_false_model)){
+            return true;
+        } 
+        return false;
+    }
+}
+return false;
 }
 
 bool dpll::solve() {
